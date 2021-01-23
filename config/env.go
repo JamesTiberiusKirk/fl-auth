@@ -1,4 +1,3 @@
-// main.go
 package config
 
 import (
@@ -26,7 +25,7 @@ func GetEnv() Env {
 	if err != nil {
 		fmt.Println("No .env file")
 	} else {
-		fmt.Print("Loading from .env..")
+		fmt.Println("Loading from .env..")
 	}
 
 	envConfig.DB_HOST = os.Getenv("DB_HOST")
