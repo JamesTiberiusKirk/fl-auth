@@ -2,12 +2,18 @@ package server
 
 import (
 	"fl-auth/controllers"
+	"fl-auth/db"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
-func Init() *echo.Echo {
+// ContextParams stores context parameters for server initialization
+type ContextParams struct {
+	DB *db.Client
+}
+
+func Init(dbc *db.Client) *echo.Echo {
 	e := echo.New()
 	e.Use(
 		middleware.Logger(),
@@ -36,11 +42,11 @@ func initRoutes(e *echo.Echo) *echo.Echo {
 }
 
 // ContextObjects attaches backend clients to the API context
-// func createContext(contextParams ContextParams) echo.MiddlewareFunc {
-// 	return func(next echo.HandlerFunc) echo.HandlerFunc {
-// 		return func(c echo.Context) error {
-// 			c.Set("db", contextParams.DB)
-// 			return next(c)
-// 		}
-// 	}
-// }
+func createContext(contextParams ContextParams) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set("db", contextParams.DB)
+			return next(c)
+		}
+	}
+}
