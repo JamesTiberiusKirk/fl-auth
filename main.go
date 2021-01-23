@@ -1,18 +1,12 @@
 package main
 
 import (
-	"fmt"
-
 	"fl-auth/config"
 	"fl-auth/server"
 )
 
 func main() {
-	env, err := config.GetEnv()
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	env := config.GetEnv()
 
 	server := server.Init()
 
