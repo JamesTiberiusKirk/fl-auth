@@ -14,6 +14,7 @@ type Env struct {
 	DB_USER     string
 	DB_PASSWORD string
 	SERVER_PORT string
+	// JWT_SECRET  string
 }
 
 func GetEnv() Env {
@@ -34,6 +35,7 @@ func GetEnv() Env {
 	envConfig.DB_USER = os.Getenv("DB_USER")
 	envConfig.DB_PASSWORD = os.Getenv("DB_PASSWORD")
 	envConfig.SERVER_PORT = os.Getenv("SERVER_PORT")
+	// envConfig.JWT_SECRET = os.Getenv("JWT_SECRET")
 
 	return envConfig
 }

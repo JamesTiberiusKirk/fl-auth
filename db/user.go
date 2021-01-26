@@ -2,40 +2,58 @@ package db
 
 import (
 	"context"
-	"fmt"
+	"fl-auth/models"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Users struct {
-	Email    string
-	Username string
-	Password string
+const (
+	DB_NAME         = "fl-auth"
+	USER_COLLECTION = "users"
+)
+
+func (db *Client) CheckUser(lookupEmail string) (bool, error) {
+	dbc := db.conn
+	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
+
+	// Checking if user exists
+	var u models.User
+	findErr := collection.FindOne(context.TODO(), bson.M{"email": lookupEmail}).Decode(&u)
+	if findErr != nil && findErr != mongo.ErrNoDocuments {
+		return false, findErr
+	}
+	if u.Email == lookupEmail {
+		return true, nil
+	}
+
+	return false, nil
 }
 
 /* Function to add user for the client class. */
-func (db *Client) AddUser(user Users) error {
+func (db *Client) AddUser(user models.User) error {
 	dbc := db.conn
+	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
-	collection := dbc.Database("fl-auth").Collection("users")
+	// Input validation
+	if inputErr := user.IsValid(); inputErr != nil {
+		return inputErr
+	}
 
-	fmt.Println(user)
-	insertRes, err := collection.InsertOne(context.TODO(), user)
-
+	_, err := collection.InsertOne(context.TODO(), user)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(insertRes)
 	return nil
 }
 
 /* Function to get all of the users for the client class. */
-func (db *Client) GetUsersAll() ([]Users, error) {
+func (db *Client) GetUsersAll() ([]models.User, error) {
 	dbc := db.conn
-	var users []Users
+	var users []models.User
 
-	collection := dbc.Database("fl-auth").Collection("users")
+	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 	curr, err := collection.Find(context.Background(), bson.M{})
 
 	if err != nil {
@@ -50,19 +68,20 @@ func (db *Client) GetUsersAll() ([]Users, error) {
 	return users, nil
 }
 
-// func (db *Client) GetUserById(id string) (Users, error) {
-// 	dbc := db.conn
-// 	user := Users{}
+/* Function to get a document by the email. */
+func (db *Client) GetUserByEmail(lookupEmail string) (models.User, error) {
+	dbc := db.conn
+	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
-// 	return user, nil
-// }
+	// Query db for user
+	var u models.User
+	findErr := collection.FindOne(context.TODO(), bson.M{"email": lookupEmail}).Decode(&u)
+	if findErr != nil {
+		return u, findErr
+	}
 
-// func (db *Client) GetUserByEmail(email string) (Users, error) {
-// 	dbc := db.conn
-// 	user := Users{}
-
-// 	return user, nil
-// }
+	return u, nil
+}
 
 // func (db *Client) GetUserByName(name string) (Users, error) {
 // 	dbc := db.conn
