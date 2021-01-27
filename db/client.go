@@ -30,6 +30,11 @@ func Connect(env config.Env) (*Client, error) {
 
 	}
 
+	pingError := c.Ping(context.TODO(), nil)
+	if pingError != nil {
+		return &Client{}, pingError
+	}
+
 	client := &Client{
 		Conn: c,
 	}
