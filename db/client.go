@@ -4,17 +4,16 @@ import (
 	"context"
 	"fl-auth/config"
 	"fmt"
-	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Client struct {
-	conn *mongo.Client
+	Conn *mongo.Client
 }
 
-func Connect(env config.Env) *Client {
+func Connect(env config.Env) (*Client, error) {
 	mongoUri := "mongodb://" + env.DB_USER + ":" + env.DB_PASSWORD + "@" + env.DB_HOST + ":" + env.DB_PORT + "/" + env.DB_NAME
 	fmt.Printf("Connecting to %s\n", mongoUri)
 
@@ -27,12 +26,13 @@ func Connect(env config.Env) *Client {
 	c, err := mongo.Connect(context.TODO(), opts)
 
 	if err != nil {
-		log.Fatal(err)
+		return &Client{}, err
+
 	}
 
 	client := &Client{
-		conn: c,
+		Conn: c,
 	}
 
-	return client
+	return client, nil
 }

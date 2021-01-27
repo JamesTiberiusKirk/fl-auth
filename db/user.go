@@ -14,7 +14,7 @@ const (
 )
 
 func (db *Client) CheckUser(lookupEmail string) (bool, error) {
-	dbc := db.conn
+	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
 	// Checking if user exists
@@ -32,7 +32,7 @@ func (db *Client) CheckUser(lookupEmail string) (bool, error) {
 
 /* Function to add user for the client class. */
 func (db *Client) AddUser(user models.User) error {
-	dbc := db.conn
+	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
 	// Input validation
@@ -50,7 +50,7 @@ func (db *Client) AddUser(user models.User) error {
 
 /* Function to get all of the users for the client class. */
 func (db *Client) GetUsersAll() ([]models.User, error) {
-	dbc := db.conn
+	dbc := db.Conn
 	var users []models.User
 
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
@@ -70,7 +70,7 @@ func (db *Client) GetUsersAll() ([]models.User, error) {
 
 /* Function to get a document by the email. */
 func (db *Client) GetUserByEmail(lookupEmail string) (models.User, error) {
-	dbc := db.conn
+	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
 	// Query db for user

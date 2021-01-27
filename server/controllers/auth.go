@@ -5,6 +5,7 @@ import (
 	"fl-auth/lib"
 	"fl-auth/lib/auth"
 	"fl-auth/models"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -43,12 +44,14 @@ func Register(c echo.Context) error {
 
 	// Input validatin
 	if validationErr := nUser.IsValid(); validationErr != nil {
+		log.Fatalln(validationErr)
 		return c.JSON(http.StatusBadRequest, validationErr)
 	}
 
 	//Check for user
 	existingUser, dbErr := db.CheckUser(nUser.Email)
 	if dbErr != nil {
+		log.Fatalln(dbErr)
 		return c.String(http.StatusInternalServerError, MSG_DATABASE_ERR)
 	}
 	if existingUser {
@@ -58,12 +61,14 @@ func Register(c echo.Context) error {
 	// Hash the password
 	hashedPass, hashErr := lib.Hash(nUser.Password)
 	if hashErr != nil {
+		log.Fatalln(hashErr)
 		return c.String(http.StatusInternalServerError, MSG_INTERNAL_SERVER_ERR)
 	}
 	nUser.Password = hashedPass
 
 	// Database insertion
 	if dbErr := db.AddUser(nUser); dbErr != nil {
+		log.Fatalln(dbErr)
 		return c.String(http.StatusInternalServerError, MSG_DATABASE_ERR)
 	}
 
