@@ -24,7 +24,7 @@ func GetEnv() Env {
 	err := godotenv.Load(".env")
 
 	if err != nil {
-		fmt.Println("No .env file")
+		fmt.Println("No .env file..")
 	} else {
 		fmt.Println("Loading from .env..")
 	}

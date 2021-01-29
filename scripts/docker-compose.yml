@@ -22,3 +22,18 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
+  
+  fl-atuh:
+    build: ../
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - mongo
+    environment:
+      DB_HOST: mongo
+      DB_PORT: "27017"
+      DB_NAME: "fl-auth"
+      DB_USER: "fl-auth"
+      DB_PASSWORD: "fl-auth123"
+      SERVER_PORT: ":3000" 
+      JWT_SECRET: "[:7Wa*yZ*VSndbq6fPchJEw-.qP+;?"

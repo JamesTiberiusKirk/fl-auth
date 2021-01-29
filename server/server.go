@@ -18,10 +18,14 @@ func Init(dbc *db.Client) *echo.Echo {
 	contextParams := ContextParams{DB: dbc}
 	e.Use(
 		createContext(contextParams),
-		middleware.Logger(),
+		// middleware.Logger(),
 		middleware.Gzip(),
 		middleware.CORS(),
 	)
+
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "[${method}]: ${status} ${uri} ${user_agent}\n",
+	}))
 
 	e = initRoutes(e)
 	return e

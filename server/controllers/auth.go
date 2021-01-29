@@ -5,10 +5,12 @@ import (
 	"fl-auth/lib"
 	"fl-auth/lib/auth"
 	"fl-auth/models"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 /* Error messages. */
@@ -82,24 +84,29 @@ func Login(c echo.Context) error {
 	// Struct binding
 	var userLogin models.UserLoginForm
 	if bindErr := c.Bind(&userLogin); bindErr != nil {
+		fmt.Println("[ERROR] " + bindErr.Error())
 		return c.JSON(http.StatusBadRequest, bindErr)
 	}
 
 	// Query hashed db pass
 	dbUser, dbErr := db.GetUserByEmail(userLogin.Email)
+	if dbErr == mongo.ErrNoDocuments {
+		return c.String(http.StatusUnauthorized, MSG_UNAUTHORIZED)
+	}
 	if dbErr != nil {
+		fmt.Println("[ERROR] " + dbErr.Error())
 		return c.String(http.StatusInternalServerError, MSG_DATABASE_ERR)
 	}
 
 	// Compare hash and plaintext
 	if !lib.VerifyHash(dbUser.Password, userLogin.Password) {
 		return c.String(http.StatusUnauthorized, MSG_UNAUTHORIZED)
-
 	}
 
 	// Create JWT
 	userJwt, jwtErr := auth.GenerateJWT(dbUser)
 	if jwtErr != nil {
+		fmt.Println("[ERROR] " + jwtErr.Error())
 		return c.String(http.StatusInternalServerError, MSG_JWT_ERR)
 	}
 

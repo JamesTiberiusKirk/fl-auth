@@ -4,7 +4,8 @@ import (
 	"fl-auth/config"
 	"fl-auth/db"
 	"fl-auth/server"
-	"log"
+
+	"fmt"
 )
 
 func main() {
@@ -13,10 +14,9 @@ func main() {
 
 	dbClient, dbConnErr := db.Connect(env)
 	if dbConnErr != nil {
-		log.Fatalln(dbConnErr)
+		fmt.Println(dbConnErr)
 	}
 
 	server := server.Init(dbClient)
-
 	server.Start(env.SERVER_PORT)
 }
