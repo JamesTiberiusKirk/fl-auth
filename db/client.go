@@ -10,15 +10,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Client contains the mongo connection and custom functions.
 type Client struct {
 	Conn *mongo.Client
 }
 
+// Connect for connecting to the mongo serer.
 func Connect(env config.Env) (*Client, error) {
-	mongoUri := "mongodb://" + env.DB_USER + ":" + env.DB_PASSWORD + "@" + env.DB_HOST + ":" + env.DB_PORT + "/" + env.DB_NAME
-	fmt.Printf("Connecting to %s\n", mongoUri)
+	mongoURI := "mongodb://" + env.DB_USER + ":" + env.DB_PASSWORD + "@" + env.DB_HOST + ":" + env.DB_PORT + "/" + env.DB_NAME
+	fmt.Printf("Connecting to %s\n", mongoURI)
 
-	opts := options.Client().ApplyURI(mongoUri)
+	opts := options.Client().ApplyURI(mongoURI)
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	c, err := mongo.Connect(ctx, opts)
 	defer cancel()

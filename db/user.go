@@ -13,6 +13,7 @@ const (
 	USER_COLLECTION = "users"
 )
 
+// CheckUser function for checking if user exists based on email.
 func (db *Client) CheckUser(lookupEmail string) (bool, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
@@ -30,7 +31,7 @@ func (db *Client) CheckUser(lookupEmail string) (bool, error) {
 	return false, nil
 }
 
-/* Function to add user for the client class. */
+// AddUser function to add user for the client class.
 func (db *Client) AddUser(user models.User) error {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
@@ -40,7 +41,15 @@ func (db *Client) AddUser(user models.User) error {
 		return inputErr
 	}
 
-	_, err := collection.InsertOne(context.TODO(), user)
+	// Inserting manually because I need mongo to autogenerate the ID
+	insert := bson.M{
+		"email":    user.Email,
+		"username": user.Username,
+		"password": user.Password,
+		"roles":    user.Roles,
+	}
+
+	_, err := collection.InsertOne(context.TODO(), insert)
 	if err != nil {
 		return err
 	}
@@ -48,7 +57,7 @@ func (db *Client) AddUser(user models.User) error {
 	return nil
 }
 
-/* Function to get all of the users for the client class. */
+// GetUsersAll function to get all of the users for the client class.
 func (db *Client) GetUsersAll() ([]models.User, error) {
 	dbc := db.Conn
 	var users []models.User
@@ -68,24 +77,19 @@ func (db *Client) GetUsersAll() ([]models.User, error) {
 	return users, nil
 }
 
-/* Function to get a document by the email. */
+// GetUserByEmail function to get a document by the email.
 func (db *Client) GetUserByEmail(lookupEmail string) (models.User, error) {
 	dbc := db.Conn
 	collection := dbc.Database(DB_NAME).Collection(USER_COLLECTION)
 
 	// Query db for user
 	var u models.User
-	findErr := collection.FindOne(context.TODO(), bson.M{"email": lookupEmail}).Decode(&u)
+	filter := bson.M{"email": lookupEmail}
+	findErr := collection.FindOne(context.TODO(), filter).Decode(&u)
+
 	if findErr != nil {
 		return u, findErr
 	}
 
 	return u, nil
 }
-
-// func (db *Client) GetUserByName(name string) (Users, error) {
-// 	dbc := db.conn
-// 	user := Users{}
-
-// 	return user, nil
-// }

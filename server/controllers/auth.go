@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-/* Error messages. */
+// Error messages.
 const (
 	MSG_LOGGED_IN           = "Logged in"
 	MSG_UNAUTHORIZED        = "Login failed"
@@ -24,14 +24,14 @@ const (
 	MSG_INTERNAL_SERVER_ERR = "Internal server error"
 )
 
-/* Success messages. */
+// Success messages.
 const (
 	MSG_JWT_VALID               = "JWT valid"
 	MSG_SUCCESSFULLY_REGISTERED = "Successesfully registered"
 	MSG_OK                      = "OK"
 )
 
-/* Controller to user registration. */
+// Register controller to user registration.
 func Register(c echo.Context) error {
 	db := c.Get("db").(*db.Client)
 
@@ -77,14 +77,14 @@ func Register(c echo.Context) error {
 	return c.String(http.StatusOK, MSG_SUCCESSFULLY_REGISTERED)
 }
 
-/* Controller to log in the user and return JWT token. */
+// Login controller to log in the user and return JWT token.
 func Login(c echo.Context) error {
 	db := c.Get("db").(*db.Client)
 
 	// Struct binding
 	var userLogin models.UserLoginForm
 	if bindErr := c.Bind(&userLogin); bindErr != nil {
-		fmt.Println("[ERROR] " + bindErr.Error())
+		fmt.Println("[ERROR]: " + bindErr.Error())
 		return c.JSON(http.StatusBadRequest, bindErr)
 	}
 
@@ -94,8 +94,8 @@ func Login(c echo.Context) error {
 		return c.String(http.StatusUnauthorized, MSG_UNAUTHORIZED)
 	}
 	if dbErr != nil {
-		fmt.Println("[ERROR] " + dbErr.Error())
-		return c.String(http.StatusInternalServerError, MSG_DATABASE_ERR)
+		fmt.Println("[ERROR]: " + dbErr.Error())
+		return c.String(http.StatusInternalServerError, MSG_DATABASE_ERR+dbErr.Error())
 	}
 
 	// Compare hash and plaintext
@@ -106,19 +106,19 @@ func Login(c echo.Context) error {
 	// Create JWT
 	userJwt, jwtErr := auth.GenerateJWT(dbUser)
 	if jwtErr != nil {
-		fmt.Println("[ERROR] " + jwtErr.Error())
+		fmt.Println("[ERROR]: " + jwtErr.Error())
 		return c.String(http.StatusInternalServerError, MSG_JWT_ERR)
 	}
 
 	resp := models.LoginResponseDto{
-		Message: MSG_LOGGED_IN,
 		Jwt:     userJwt,
+		Message: MSG_LOGGED_IN,
 	}
 
 	return c.JSON(http.StatusOK, resp)
 }
 
-/* Controller to verify the jwt tokens. */
+// VerifyMe controller to verify the jwt tokens.
 func VerifyMe(c echo.Context) error {
 	var userJwt models.JwtDto
 	if bindErr := c.Bind(&userJwt); bindErr != nil {

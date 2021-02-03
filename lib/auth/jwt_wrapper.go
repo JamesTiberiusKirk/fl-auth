@@ -9,8 +9,13 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+// ErrClaimParse is an error of parsing the claim
 var ErrClaimParse = errors.New("Couldn't parse claim")
+
+// ErrJwtExpired is an error of  JWT expiring
 var ErrJwtExpired = errors.New("JWT has expired")
+
+// ErrJwtInvalid is an error of JWT being invalid
 var ErrJwtInvalid = errors.New("JWT invalid")
 
 const (
@@ -19,17 +24,12 @@ const (
 	JWT_EXPIRATION_HOURS = 24
 )
 
-/* JwtWrapper wraps the signing key and the issuer. */
-// type JwtWrapper struct {
-// 	SecretKey       string
-// 	Issuer          string
-// 	ExpirationHours int64
-// }
-
-/* JwtClaim adds email and roles as a claim to the token. */
+// JwtClaim adds ID, username, email and roles as a claim to the token.
 type JwtClaim struct {
-	Email string   `json:"email"`
-	Roles []string `json:"roles"`
+	ID       string   `json:"id"`
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	Roles    []string `json:"roles"`
 	jwt.StandardClaims
 }
 
@@ -37,11 +37,12 @@ func getJwtSecretFromEnv() string {
 	return os.Getenv(JWT_SECRET_ENV)
 }
 
-/* Function to generate JWT token. */
+// GenerateJWT function to generate JWT token.
 func GenerateJWT(user models.User) (signedToken string, err error) {
 	claims := &JwtClaim{
-		Email: user.Email,
-		Roles: user.Roles,
+		Username: user.Username,
+		Email:    user.Email,
+		Roles:    user.Roles,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(JWT_EXPIRATION_HOURS)).Unix(),
 			Issuer:    SERVICE_NAME,
@@ -58,7 +59,7 @@ func GenerateJWT(user models.User) (signedToken string, err error) {
 	return
 }
 
-/* Function to validate the JWT token and return the custom claims. */
+// ValidateToken function to validate the JWT token and return the custom claims.
 func ValidateToken(userToken string) (claims *JwtClaim, err error) {
 	token, err := jwt.ParseWithClaims(
 		userToken,
