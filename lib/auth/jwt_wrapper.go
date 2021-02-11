@@ -40,6 +40,7 @@ func getJwtSecretFromEnv() string {
 // GenerateJWT function to generate JWT token.
 func GenerateJWT(user models.User) (signedToken string, err error) {
 	claims := &JwtClaim{
+		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
 		Roles:    user.Roles,
