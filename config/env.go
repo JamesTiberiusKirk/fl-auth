@@ -36,7 +36,7 @@ func GetEnv() Env {
 	envConfig.DB_PORT = os.Getenv("DB_PORT")
 	envConfig.DB_USER = os.Getenv("DB_USER")
 	envConfig.DB_PASSWORD = os.Getenv("DB_PASSWORD")
-	envConfig.SERVER_PORT = os.Getenv("HTTP_PORT")
+	envConfig.SERVER_PORT = os.Getenv("SERVER_PORT")
 	envConfig.JWT_SECRET = os.Getenv("JWT_SECRET")
 
 	return envConfig
