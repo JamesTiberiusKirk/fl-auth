@@ -24,7 +24,7 @@ func Init(dbc *db.Client) *echo.Echo {
 	)
 
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "[${method}]: ${status} ${uri} ${user_agent}\n",
+		Format: "[FL-AUTH]: [HTTP]: ${method} ${status} ${uri} ${user_agent}\n",
 	}))
 
 	e = initRoutes(e)
