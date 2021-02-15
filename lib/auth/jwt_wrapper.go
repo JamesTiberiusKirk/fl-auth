@@ -2,8 +2,8 @@ package auth
 
 import (
 	"errors"
+	"fl-auth/config"
 	"fl-auth/models"
-	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -34,7 +34,8 @@ type JwtClaim struct {
 }
 
 func getJwtSecretFromEnv() string {
-	return os.Getenv(JWT_SECRET_ENV)
+	// return os.Getenv(JWT_SECRET_ENV)
+	return config.GetEnv().JWT_SECRET
 }
 
 // GenerateJWT function to generate JWT token.

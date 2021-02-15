@@ -8,13 +8,14 @@ import (
 )
 
 type Env struct {
+	MS_NAME     string
 	DB_HOST     string
 	DB_PORT     string
 	DB_NAME     string
 	DB_USER     string
 	DB_PASSWORD string
 	SERVER_PORT string
-	// JWT_SECRET  string
+	JWT_SECRET  string
 }
 
 func GetEnv() Env {
@@ -29,13 +30,14 @@ func GetEnv() Env {
 		fmt.Println("Loading from .env..")
 	}
 
+	envConfig.MS_NAME = os.Getenv("MS_NAME")
 	envConfig.DB_HOST = os.Getenv("DB_HOST")
 	envConfig.DB_NAME = os.Getenv("DB_NAME")
 	envConfig.DB_PORT = os.Getenv("DB_PORT")
 	envConfig.DB_USER = os.Getenv("DB_USER")
 	envConfig.DB_PASSWORD = os.Getenv("DB_PASSWORD")
-	envConfig.SERVER_PORT = os.Getenv("SERVER_PORT")
-	// envConfig.JWT_SECRET = os.Getenv("JWT_SECRET")
+	envConfig.SERVER_PORT = os.Getenv("HTTP_PORT")
+	envConfig.JWT_SECRET = os.Getenv("JWT_SECRET")
 
 	return envConfig
 }
