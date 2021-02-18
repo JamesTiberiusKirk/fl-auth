@@ -13,6 +13,7 @@ type ContextParams struct {
 	DB *db.Client
 }
 
+// Init to initialize an Echo route
 func Init(dbc *db.Client) *echo.Echo {
 	e := echo.New()
 	contextParams := ContextParams{DB: dbc}
